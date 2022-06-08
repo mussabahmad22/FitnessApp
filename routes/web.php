@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UploadController;
 use App\Models\User;
 use App\Models\Equipment;
+use App\Models\Clas;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,8 @@ use App\Models\Equipment;
 Route::get('/', function () {
     $users =  User::all()->count();
     $categoury = Equipment::all()->count();
-    return view('admin.dashboard',compact('users','categoury'));
+    $class = Clas::all()->count();
+    return view('admin.dashboard',compact('users','class','categoury'));
 })->middleware(['auth']);
 
 
@@ -70,7 +72,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/dashboard', function () {
     $users =  User::all()->count();
     $categoury = Equipment::all()->count();
-    return view('admin.dashboard',compact('users','categoury'));
+    $class = Clas::all()->count();
+    return view('admin.dashboard',compact('users','class','categoury'));
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__ . '/auth.php';

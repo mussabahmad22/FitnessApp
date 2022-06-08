@@ -31,7 +31,7 @@
                                     <label class="form-label ">Title Image
                                         :</label><br>
                                     <input class="form-control" type="file"
-                                        name="file_title" value="#">
+                                        name="file_title" accept="image/*" value="#">
                                         <span class="text-danger">
                                             @error('file_title')
                                             {{$message}}

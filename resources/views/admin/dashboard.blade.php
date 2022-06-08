@@ -42,6 +42,17 @@
                         </div>
                       </div>
                     </div>
+                    <div class="col-lg-3 col-sm-12 mt-4">
+                      <div class="card  bg-success mb-3">
+                        <div class="card-header font-weight-bold">Total Classes</div>
+                        <div class="card-body">
+                          <span class="display-4  text-white font-weight-bold px-0">{{ $class }}</span>
+                          <i class="ni ni-calendar-grid-58  text-white font-weight-bold px-0"></i>
+                          <p class="card-text  text-white font-weight-bold px-0" id="class">Manage Classes <i
+                              class="fas fa-arrow-circle-right"></i></p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -61,6 +72,9 @@
 
     $('#category').on('click', function () {
       window.location.href = '{{route("equipments")}}';
+    });
+    $('#class').on('click', function () {
+      window.location.href = '{{route("classes")}}';
     });
 
   });

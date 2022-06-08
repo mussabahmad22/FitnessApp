@@ -7,7 +7,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="{{asset('img/apple-icon.png')}}">
     <link rel="icon" type="image/png" href="{{asset('img/favicon.png')}}">
     <title>
-
+ 
         DASHBOARD | FITNESS KIOSK
     </title>
     <!--     Fonts and icons     -->
@@ -83,7 +83,7 @@
                     <a class="nav-link {{ (\Request::route()->getName() == 'dashboard') ? 'active' : '' }}" href="{{url('dashboard')}}">
                         <div
                             class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
+                            <i class="ni ni-tv-2 text-info text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Dashboard</span>
                     </a>
@@ -129,7 +129,7 @@
                     <a class="nav-link {{ (\Request::route()->getName() == 'ratings') ? 'active' : '' }}" href="{{route('ratings')}}">
                         <div
                             class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="ni ni-single-copy-04 text-primary text-sm opacity-10"></i>
+                            <i class="ni ni-single-copy-04 text-dark text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Ratings</span>
                     </a>

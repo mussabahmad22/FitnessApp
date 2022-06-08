@@ -28,7 +28,7 @@
 
                                 <div class="mb-3">
                                     <label class="form-label ">Title Image :</label><br>
-                                    <input class="form-control" type="file" name="file_title" value="#">
+                                    <input class="form-control" type="file" name="file_title" accept="image/*" value="#">
                                 </div>
                                 <br>
                                 <div class="mb-3">
