@@ -14,7 +14,7 @@
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="table-responsive p-0">
                                 <div style="float: right; margin-right:50px;">
-                                    <a href="{{route('show_add_class')}}"><button type="button" class="btn btn-dark">+
+                                    <a href="{{route('show_add_class')}}"><button type="button" class="btn btn-Success text-dark mb-0">+
                                             Add
                                             Class</button></a>
                                 </div>
@@ -47,11 +47,11 @@
                                                     <?= $que->clas_name?>
                                                 </td>
                                                 <td>
-                                                    <img src="{{asset('storage/'. $que->clas_img)}}" width="50"
+                                                    <img src="{{asset('public/storage/'. $que->clas_img)}}" width="50"
                                                         height="50">
                                                 </td>
                                                 <td>
-                                                    <a class="flex items-center text-theme-1 mr-3 btn"
+                                                    <a class="flex items-center text-theme-1 mr-3 btn text-info"
                                                         href="{{route('edit_class',['id' => $que->id])}}"> <img
                                                             src="{{asset('img/edit.svg')}}"> Edit </a>
 

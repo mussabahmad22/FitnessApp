@@ -21,6 +21,7 @@
         "tailwindcss": "^3.0.18"
     },
     "dependencies": {
+        "filepond-plugin-file-validate-type": "^1.2.8",
         "jquery-filepond": "^1.0.0"
     }
 }

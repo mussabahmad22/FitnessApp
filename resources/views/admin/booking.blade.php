@@ -9,11 +9,39 @@
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h5> Ratings</h5>
+                            <h5> Bookings of session</h5>
+                        </div>
+                        <div class="card-header pb-0">
+                            <form action="{{url('booking_export')}}" method="GET">
+                                <div class="row">
+
+                                    <div class="col-3">
+
+                                        <div class=" mb-3">
+                                            <label class="input-group ">Start Date*</label>
+                                            <input type="date" class="form-control" name="start_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class=" mb-3">
+                                            <label class="input-group">End Date*</label>
+                                            <input type="date" class="form-control" name="end_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="input-group-append mt-4">
+                                            <!-- <div style="float: right; margin-right:50px;"> -->
+                                            <button class="btn btn-outline-dark mb-0" type="submit">+ Export
+                                                Data</button>
+                                            <!-- </div> -->
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="table-responsive p-0">
-                                <!-- BEGIN: Datatable -->
                                 <div class="intro-y datatable-wrapper box p-5 mt-1">
                                     <table id="exercisetbl"
                                         class="table table-report  table-report--bordered display w-full">
@@ -24,43 +52,46 @@
                                                 <th class="border-b-2  whitespace-no-wrap whitespace-no-wrap">
                                                     Username</th>
                                                 <th class="border-b-2  whitespace-no-wrap whitespace-no-wrap">
-                                                    Class</th>
+                                                    Email</th>
 
                                                 <th class="border-b-2  whitespace-no-wrap whitespace-no-wrap">
-                                                    Like/Dislike</th>
+                                                    Phone </th>
 
                                                 <th class="border-b-2  whitespace-no-wrap whitespace-no-wrap">
-                                                    Difficulty</th>
+                                                    Type Session </th>
 
                                                 <th class="border-b-2  whitespace-no-wrap whitespace-no-wrap">
-                                                    Instructor</th>
+                                                    Date </th>
+
                                                 <th class="border-b-2  whitespace-no-wrap whitespace-no-wrap">
                                                     Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php  $i = 0; ?>
-                                            @foreach($ratings as $rate)
+                                            @foreach($booking as $book)
                                             <?php $i++; ?>
+
                                             <tr>
-                                                <th scope="row">{{$i}}</th>
+                                                <th scope="row">{{ $i }}</th>
                                                 <td>
-                                                    {{$rate->name}}
+                                                    <?= $book->user_name?>
                                                 </td>
                                                 <td>
-                                                    {{$rate->clas_name}}
+                                                    <?= $book->user_email?>
                                                 </td>
                                                 <td>
-                                                    {{$rate->class_review}}
+                                                    <?= $book->phone?>
                                                 </td>
                                                 <td>
-                                                    {{$rate->difficulty_rating}} star
+                                                    <?= $book->class_type?>
                                                 </td>
                                                 <td>
-                                                    {{$rate->instructor_rating}} star
+                                                    <?= $book->created_at->format('d-m-Y')?>
                                                 </td>
+
                                                 <td>
-                                                    <button style="border:none;" type="button" value="{{$rate->id}}"
+                                                    <button style="border:none;" type="button" value="{{$book->id}}"
                                                         class="deletebtn btn"><a
                                                             class="flex items-center text-theme-1 mr-3  text-danger "
                                                             data-toggle="modal" data-target="#myModal" href=""> <img
@@ -89,14 +120,14 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form type="submit" action="{{route('ratings_delete')}}" method="post">
+                                        <form type="submit" action="{{route('booking_delete')}}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <div class="intro-y col-span-12 lg:col-span-8 p-5">
                                                 <div class="grid grid-cols-12 gap-4 row-gap-5">
-                                                    <input type="hidden" name="delete_rating_id"
+                                                    <input type="hidden" name="delete_booking_id"
                                                         id="deleting_id"></input>
-                                                    <p>Are you sure! want to Delete User's Rating?</p>
+                                                    <p>Are you sure! want to Delete User's Details?</p>
                                                 </div>
                                             </div>
                                     </div>

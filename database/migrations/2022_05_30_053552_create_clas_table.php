@@ -15,8 +15,10 @@ class CreateClasTable extends Migration
     {
         Schema::create('clas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('eqp_id')->constrained('equipment')->nullable()->default(NULL);
+            $table->foreignId('eqp_id')->constrained('equipment')->default("");
             $table->string('clas_name');
+            $table->string('workout_level');
+            $table->string('trainer_name');
             $table->string('clas_img');
             $table->string('clas_video_path');
             $table->timestamps();

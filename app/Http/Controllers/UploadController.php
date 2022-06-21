@@ -25,12 +25,13 @@ class UploadController extends Controller
             $name = $request->file('video_file')->getClientOriginalName();
  
             $path = $request->file('video_file')->store('public/files');
+            $vedio_name = "files/" .  basename($path);
 
             // $save = new File; 
             // $save->name = $name;
             // $save->path = $path;
             // $save->save();
-            return $path;
+            return $vedio_name;
         }
 
 

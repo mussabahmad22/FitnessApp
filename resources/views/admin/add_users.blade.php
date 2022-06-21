@@ -25,12 +25,11 @@
                                             value="{{ isset($record->name)?$record->name:'' }}">
                                         <span class="text-danger">
                                             @error('name')
-                                            {{$message}}
+                                            {{' user name is required'}}
                                             @enderror
                                         </span>
                                     </div>
-                                    <label for="exampleInputEmail1"
-                                        class="form-label ">Email address*</label>
+                                    <label for="exampleInputEmail1" class="form-label ">Email address*</label>
                                     <input type="email" class="form-control " name="email" id="exampleInputEmail1"
                                         aria-describedby="emailHelp"
                                         value="{{ isset($record->email)?$record->email:'' }}">
@@ -53,7 +52,55 @@
                                         @enderror
                                     </span>
                                 </div>
-                                <button type="submit" id="submit" class="btn btn-dark">{{$text}}</button>
+                                <br>
+                                <div class="card">
+                                    <div class="table-responsive">
+                                        <table class="table align-items-center mb-0" id="dynamicAddRemove">
+                                            <tr>
+                                                <th>Add Multiple Emails</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            @if(count($multiple_emails) == 0)
+                                            <tr>
+                                                <td><input type="email" name="moreFields[]" placeholder="Enter Email"
+                                                        class="form-control" /></td>
+                                                <td><button type="button" name="add" id="add-btn"
+                                                        class="btn btn-success">+ Add
+                                                        More</button></td>
+                                            </tr>
+                                            @else
+                                            @foreach($multiple_emails as $key => $email)
+                                            <tr>
+                                                <td>
+                                                    <input type="email" name="moreFields[]"
+                                                        value="{{ isset($email->multiple_emails)?$email->multiple_emails:'' }}"
+                                                        placeholder="Enter Email" class="form-control" />
+                                                </td>
+                                                @if($key == 0)
+                                                <td><button type="button" name="add" id="add-btn"
+                                                        class="btn btn-success">+ Add
+                                                        More</button>
+                                                </td>
+                                                @else
+                                                <td>
+                                                    <button type="button" class="btn btn-danger remove-tr">-
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                                @endif
+                                            </tr>
+                                            @endforeach
+                                            @endif
+                                        </table>
+                                        <span class="text-danger">
+                                            @error('moreFields.*')
+                                            Minimum 1 email is required
+                                            @enderror
+                                        </span>
+                                    </div>
+                                </div>
+                                <br>
+                                <button type="submit" id="submit" class="btn btn-dark btn-lg">{{$text}}</button>
                             </form>
                         </div>
                     </div>
@@ -62,6 +109,20 @@
         </div>
     </section>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var i = 0;
+    $("#add-btn").click(function () {
+        ++i;
+
+        $("#dynamicAddRemove").append('<tr><td><input type="email" name="moreFields[]" placeholder="Enter Email" class="form-control" /></td><td><button type="button" class="btn btn-danger remove-tr">- Remove</button></td></tr>');
+
+    });
+    $(document).on('click', '.remove-tr', function () {
+        $(this).parents('tr').remove();
+    });  
+</script>
 
 
 @endsection

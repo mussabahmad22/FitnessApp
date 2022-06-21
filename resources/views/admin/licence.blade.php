@@ -14,7 +14,7 @@
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="table-responsive p-0">
                                 <div style="float: right; margin-right:50px;">
-                                    <button type="button" class="btn btn-dark" data-toggle="modal"
+                                    <button type="button" class="btn btn-Success text-dark mb-0" data-toggle="modal"
                                         data-target="#exampleModal">+ Add
                                         Licence</button>
                                 </div>
@@ -57,7 +57,7 @@
                                                 <td>
                                                     <button style="border:none;" type="button" value="{{$licence->id}}"
                                                         class="editbtn btn"><a
-                                                            class="flex items-center text-theme-1 mr-3  "
+                                                            class="flex items-center text-theme-1 mr-3 text-info "
                                                             data-toggle="modal" data-target="#myModal1" href=""><img
                                                                 src="{{asset('img/edit.svg')}}">
                                                             Edit </a></button>
@@ -130,21 +130,28 @@
                                                 <form type="submit" action="{{route('add_licence')}}" method="post">
                                                     @csrf
                                                     <div class="intro-y col-span-12 lg:col-span-8 p-5">
+
                                                         <div class="grid grid-cols-12 gap-4 row-gap-5">
-                                                            <div class="mb-3">
-                                                                <label class="form-label">licence ID*</label>
-                                                                <input type="text" class="form-control"
-                                                                    name="licence_id" id="licence_id">
-                                                                <span class="text-danger">
-                                                                    @error('licence_id')
-                                                                    {{$message}}
-                                                                    @enderror
-                                                                </span>
+                                                            
+                                                            <label class="input-group mb-3">licence ID*</label>
+                                                            <div class="input-group mb-3">
+                                                                <input type="text" class="form-control "
+                                                                    name="licence_id" id="licence_id" required>
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-outline-dark mb-0"
+                                                                        type="button" onclick="gfg();">Generate
+                                                                        ID</button>
+                                                                </div>
                                                             </div>
+                                                            <span class="text-danger">
+                                                                @error('licence_id')
+                                                                {{$message}}
+                                                                @enderror
+                                                            </span>
                                                             <div class="mb-3 ">
                                                                 <label class="form-label">Start Date :</label>
                                                                 <input type="date" class="form-control" id="start_date"
-                                                                    name="start_date">
+                                                                    name="start_date" required>
                                                                 <span class="text-danger">
                                                                     @error('start_date')
                                                                     {{$message}}
@@ -154,7 +161,7 @@
                                                             <div class="mb-3">
                                                                 <label class="form-label">End Date :</label>
                                                                 <input type="date" class="form-control" id="end_date"
-                                                                    name="end_date">
+                                                                    name="end_date" required>
                                                                 <span class="text-danger">
                                                                     @error('end_date')
                                                                     {{$message}}
@@ -244,6 +251,18 @@
     </div>
 </div>
 <script>
+    var up = document.getElementById('GFG_UP');
+    var down = document.getElementById('num');
+
+    function gfg() {
+        var minm = 1000000;
+        var maxm = 9999999;
+        $random = Math.floor(Math
+            .random() * (maxm - minm + 1)) + minm;
+        $('#licence_id').val($random);
+    }
+</script>
+<script>
     $(document).ready(function () {
 
         //===================Script For Edit Exercise ====================================
@@ -273,7 +292,7 @@
         });
     });
 </script>
-<script>
+<script> 
     $(document).ready(function () {
         $('#exercisetbl').DataTable();
     });

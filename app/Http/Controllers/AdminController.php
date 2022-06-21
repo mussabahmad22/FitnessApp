@@ -8,9 +8,16 @@ use App\Models\Equipment;
 use App\Models\Clas;
 use App\Models\User;
 use App\Models\Licence;
+use App\Models\AddMultipleEqp;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BookingExport;
+use App\Models\MultipleEmail;
+use App\Models\Booking;
+use App\Models\Rating;
 
 use Illuminate\Http\Request;
+use Monolog\Handler\NullHandler;
 
 class AdminController extends Controller
 {
@@ -32,8 +39,10 @@ class AdminController extends Controller
     {
         $url = url('add_users');
         $title = 'Add User';
+        $multiple_emails = [];
         $text = 'Save';
-        return view('admin.add_users', ['url' => $url, 'title' => $title, 'text' => $text]);
+
+        return view('admin.add_users', ['multiple_emails' => $multiple_emails, 'url' => $url, 'title' => $title, 'text' => $text]);
     }
 
     public function add_users(Request $request)
@@ -43,6 +52,7 @@ class AdminController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
+            'moreFields.*' => 'required'
         ]);
 
         $users = new User();
@@ -50,12 +60,29 @@ class AdminController extends Controller
         $users->email = $request->email;
         $users->password = Hash::make($request->password);
         $users->save();
+
+        $emails = $request->moreFields;
+
+        foreach ($emails as $value) {
+
+            $email = new MultipleEmail();
+            $email->user_id = $users->id;
+            $email->multiple_emails = $value;
+            $email->save();
+        }
+
         return redirect(route('users', compact('users')))->with('success', 'User Added successfully');
     }
 
     public function delete_user(Request $request)
     {
         $user_id = $request->delete_user_id;
+        $booking_user = Booking::where('user_id', $user_id);
+        $booking_user->delete();
+        $multiple_emails = MultipleEmail::where('user_id', $user_id);
+        $multiple_emails->delete();
+        $ratings = Rating::where('user_id',$user_id);
+        $ratings->delete();
         $users = User::findOrFail($user_id);
         $users->delete();
         return redirect(route('users'))->with('error', 'User Deleted successfully');
@@ -65,18 +92,24 @@ class AdminController extends Controller
     {
 
         $record = User::find($id);
+        $multiple_emails = MultipleEmail::where("user_id", $record->id)->get();
         $url = url('update_user') . "/" . $id;
         $title = 'Edit User';
         $text = 'Update';
-        return view('admin.add_users', ['record' => $record, 'url' => $url, 'title' => $title, 'text' => $text]);
+        return view('admin.add_users', ['multiple_emails' => $multiple_emails, 'record' => $record, 'url' => $url, 'title' => $title, 'text' => $text]);
     }
     public function update_user($id, Request $request)
     {
+        
+        $email = MultipleEmail::where('user_id', $id);
+        $email->delete();
+
 
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required',
+            'moreFields.*' => 'required'
         ]);
 
         $users = User::findOrFail($id);
@@ -84,6 +117,17 @@ class AdminController extends Controller
         $users->email = $request->email;
         $users->password = Hash::make($request->password);
         $users->save();
+
+        $emails = $request->moreFields;
+        // dd($emails);
+
+        foreach ($emails as $value) {
+
+            $email = new MultipleEmail();
+            $email->user_id = $users->id;
+            $email->multiple_emails = $value;
+            $email->save();
+        }
         return redirect(route('users'))->with('success', 'User Update successfully');
     }
 
@@ -106,7 +150,7 @@ class AdminController extends Controller
     {
 
         $request->validate([
-            'licence_id' => 'required',
+            'licence_id' => 'required|integer|digits:7',
             'start_date' => 'required',
             'end_date' => 'required'
         ]);
@@ -133,7 +177,7 @@ class AdminController extends Controller
     {
 
         $request->validate([
-            'licence_id' => 'required',
+            'licence_id' => 'required|integer|digits:7',
             'start_date' => 'required',
             'end_date' => 'required'
         ]);
@@ -182,21 +226,23 @@ class AdminController extends Controller
     {
 
         if ($request->file('file_title') == null) {
-            $path_title = "";
+            $image_name = "";
         } else {
             $path_title = $request->file('file_title')->store('public/images');
+
+            $image_name = basename($path_title);
         }
 
         $request->validate([
             'eqp_title' => 'required',
-            'file_title' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'file_title' => 'required',
             'eqp_desc' => 'required',
             'video_file' => 'required',
         ]);
 
         $eqp = new Equipment();
         $eqp->eqp_name = $request->eqp_title;
-        $eqp->eqp_img = $path_title;
+        $eqp->eqp_img = "images/" . $image_name;
         $eqp->eqp_desc = $request->eqp_desc;
         $eqp->eqp_video_path =  $request->video_path;
         $eqp->save();
@@ -219,14 +265,18 @@ class AdminController extends Controller
         $request->validate([
             'eqp_title' => 'required',
             'eqp_desc' => 'required',
-       
+
         ]);
 
         $eqp = Equipment::findOrFail($id);
+
         if ($request->file('file_title') == null) {
-            $path_title = $eqp->eqp_img;
+
+            $image_name = $eqp->eqp_img;
         } else {
-            $path_title = $request->file('file_title')->store('images');
+            $path_title = $request->file('file_title')->store('public/images');
+
+            $image_name = "images/".  basename($path_title);
         }
 
         if ($request->video_path == null) {
@@ -236,7 +286,7 @@ class AdminController extends Controller
         }
 
         $eqp->eqp_name = $request->eqp_title;
-        $eqp->eqp_img = $path_title;
+        $eqp->eqp_img = $image_name;
         $eqp->eqp_desc = $request->eqp_desc;
         $eqp->eqp_video_path =  $video_path;
         $eqp->save();
@@ -249,6 +299,8 @@ class AdminController extends Controller
         $query_id = $request->delete_equipment_id;
         $class = Clas::where('eqp_id', $query_id);
         $class->delete();
+        $add_multiple_eqp_id = AddMultipleEqp::where('eqp_id', $query_id);
+        $add_multiple_eqp_id->delete();
         $equip = Equipment::findOrFail($query_id);
         $equip->delete();
         return redirect()->back()->with('error', 'Equipment Deleted successfully');
@@ -268,33 +320,55 @@ class AdminController extends Controller
         $eqps = Equipment::all();
         $url = url('add_class');
         $title = 'Add Class';
+        $mltp_eqp_array = [];
         $text = 'Save';
         $variable_text = 'disabled';
-        return view('admin.add_class', ['eqps' =>  $eqps ,'url' => $url, 'title' => $title, 'text' => $text, 'variable_text' => $variable_text]);
+        return view('admin.add_class', ['eqps' =>  $eqps, 'url' => $url, 'mltp_eqp_array' =>   $mltp_eqp_array, 'title' => $title, 'text' => $text, 'variable_text' => $variable_text]);
     }
 
     public function add_clas(Request $request)
     {
 
         if ($request->file('file_title') == null) {
-            $path_title = "";
+            $image_name = "";
         } else {
             $path_title = $request->file('file_title')->store('public/images');
-        }
 
+            $image_name = basename($path_title);
+        }
 
         $request->validate([
             'clas_title' => 'required',
-            'eqp_title_id' => 'required',
+            'trainer_name' => 'required',
+            'workout_level' => 'required',
+            'file_title' => 'required',
             'video_file' => 'required',
         ]);
 
         $clas = new Clas();
-        $clas->eqp_id = $request->eqp_title_id;
+        //$clas->eqp_id = $request->eqp_title_id;
         $clas->clas_name = $request->clas_title;
-        $clas->clas_img = $path_title;
+        $clas->workout_level = $request->workout_level;
+        $clas->trainer_name = $request->trainer_name;
+        $clas->clas_img = "images/" . $image_name;
         $clas->clas_video_path = $request->video_path;
         $clas->save();
+
+        $eqps = $request->eqp_title_id;
+        if (is_null($eqps)) {
+
+            $mltp_eqp = new AddMultipleEqp();
+            $mltp_eqp->class_id = $clas->id;
+            $mltp_eqp->eqp_id = NULL;
+            $mltp_eqp->save();
+        } else {
+            foreach ($eqps as $eqp) {
+                $mltp_eqp = new AddMultipleEqp();
+                $mltp_eqp->class_id = $clas->id;
+                $mltp_eqp->eqp_id = $eqp;
+                $mltp_eqp->save();
+            }
+        }
         return redirect(route('classes'))->with('success', 'Class Added successfully');
     }
 
@@ -302,40 +376,83 @@ class AdminController extends Controller
     {
         $eqps = Equipment::all();
         $record = Clas::find($id);
+
+        $mltp_eqp = AddMultipleEqp::where('class_id', $record->id)->get();
+        $mltp_eqp_array = [];
+        foreach ($mltp_eqp as $mltp) {
+            array_push($mltp_eqp_array, $mltp->eqp_id);
+        }
+
         $url = url('update_class') . "/" . $id;
         $title = 'Edit Class';
         $text = 'Update';
         $variable_text = '';
-        return view('admin.add_class', ['eqps' =>  $eqps ,'record' => $record, 'url' => $url, 'title' => $title, 'text' => $text, 'variable_text' => $variable_text]);
+        return view('admin.add_class', ['eqps' =>  $eqps, 'mltp_eqp_array' =>   $mltp_eqp_array, 'record' => $record, 'url' => $url, 'title' => $title, 'text' => $text, 'variable_text' => $variable_text]);
     }
+
     public function update_class($id, Request $request)
     {
 
+        $eqp = AddMultipleEqp::where('class_id', $id);
+        $eqp->delete();
+
+
         $request->validate([
             'clas_title' => 'required',
-            'eqp_title_id' => 'required',
-           
+            'trainer_name' => 'required',
+            'workout_level' => 'required',
+
         ]);
 
         $class = Clas::findOrFail($id);
-    
+
         if ($request->file('file_title') == null) {
-            $path_title = $class->clas_img;
+
+            $image_name = $class->clas_img;
         } else {
             $path_title = $request->file('file_title')->store('public/images');
+
+            $image_name = "images/" .  basename($path_title);
         }
 
         if ($request->video_path == null) {
+
             $video_path = $class->clas_video_path;
         } else {
+
             $video_path = $request->video_path;
         }
 
-        $class->eqp_id = $request->eqp_title_id;
+        //$class->eqp_id = $request->eqp_title_id;
         $class->clas_name = $request->clas_title;
-        $class->clas_img = $path_title;
+        $class->workout_level = $request->workout_level;
+        $class->trainer_name = $request->trainer_name;
+        $class->clas_img =   $image_name;
         $class->clas_video_path = $video_path;
         $class->save();
+
+        $eqps = $request->eqp_title_id;
+        if (is_null($eqps)) {
+
+            $eqp = AddMultipleEqp::where('class_id', $id);
+            $eqp->delete();
+
+            $mltp_eqp = new AddMultipleEqp();
+            $mltp_eqp->class_id = $class->id;
+            $mltp_eqp->eqp_id = NULL;
+            $mltp_eqp->save();
+        } else {
+
+            $eqp = AddMultipleEqp::where('class_id', $id);
+            $eqp->delete();
+
+            foreach ($eqps as $eqp) {
+                $mltp_eqp = new AddMultipleEqp();
+                $mltp_eqp->class_id = $class->id;
+                $mltp_eqp->eqp_id = $eqp;
+                $mltp_eqp->save();
+            }
+        }
         return redirect(route('classes'))->with('success', 'Class Update successfully');
     }
 
@@ -343,6 +460,12 @@ class AdminController extends Controller
     {
 
         $query_id = $request->delete_class_id;
+        $multiple_eqp_delete_class_id = AddMultipleEqp::where('class_id', $query_id);
+        $multiple_eqp_delete_class_id->delete();
+        $ratings = Rating::where('class_id', $query_id);
+        $ratings->delete();
+        $booking = Booking::where('class_id', $query_id);
+        $booking->delete();
         $class = Clas::findOrFail($query_id);
         $class->delete();
         return redirect()->back()->with('error', 'Licence Deleted successfully');
@@ -350,14 +473,36 @@ class AdminController extends Controller
 
     //============================ Rating & Reviews Controller =========================================
 
-    public function ratings(){
-
-        return view('admin.ratings');
+    public function ratings()
+    {
+        $ratings = Rating::join('clas','ratings.class_id', '=', 'clas.id')->join('users', 'ratings.user_id', '=', 'users.id')->select('users.name', 'clas.clas_name' ,'ratings.class_review','ratings.difficulty_rating','ratings.instructor_rating','ratings.id')->get();
+        return view('admin.ratings', compact('ratings'));
     }
 
-    public function reviews(){
-
-        return view('admin.reviews');
+    public function ratings_delete(Request $request)
+    {
+        
+        $query_id = $request->delete_rating_id;
+        $ratings = Rating::findOrFail($query_id);
+        $ratings->delete();
+        return redirect()->back()->with('error', 'Ratings Deleted successfully');
     }
 
+    public function booking()
+    {
+        $booking = Booking::all();
+        return view('admin.booking', compact('booking'));
+    }
+
+    public function get_booking_data()
+    {
+        return Excel::download(new BookingExport, 'booking_list.xlsx');
+    }
+    public function booking_delete(Request $request)
+    {
+        $query_id = $request->delete_booking_id;
+        $booking = Booking::findOrFail($query_id);
+        $booking->delete();
+        return redirect()->back()->with('error', 'Booking Deleted successfully');
+    }
 }

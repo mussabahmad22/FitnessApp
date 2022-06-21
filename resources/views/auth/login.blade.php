@@ -36,8 +36,8 @@
                                 <x-auth-session-status class="mb-4" :status="session('status')" />
 
                                 <!-- Validation Errors -->
-                                <x-auth-validation-errors class="mb-4" :errors="$errors" />
-                                    <p class="mb-0">Enter your email and password to sign in</p>
+                                <x-auth-validation-errors class="mb-4 text-danger" :errors="$errors" />
+                                    <p class="mb-0" style="font-size:15px;">Enter your email and password to sign in</p>
                                 </div>
                                 <div class="card-body">
                                     <form method="POST" action="{{ route('login') }}">
@@ -52,13 +52,13 @@
                                                 placeholder="Password" name="password" autocomplete="current-password"
                                                 aria-label="Password">
                                         </div>
-                                        <div class="form-check form-switch">
+                                        <!-- <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="rememberMe">
                                             <label class="form-check-label" for="rememberMe">Remember me</label>
-                                        </div>
+                                        </div> -->
                                         <div class="text-center">
                                             <button type="submit"
-                                                class="btn btn-lg btn-primary btn-lg w-100 mt-4 mb-0">Sign in</button>
+                                                class="btn btn-lg btn-primary btn-lg w-100 mt-2 mb-0">Sign in</button>
                                         </div>
                                     </form>
                                 </div>

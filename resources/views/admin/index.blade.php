@@ -19,7 +19,7 @@
                             <div class="table-responsive p-0">
 
                                 <div style="float: right; margin-right:50px;">
-                                    <a href="{{route('userform')}}"><button type="button" class="btn btn-dark">
+                                    <a href="{{route('userform')}}"><button type="button" class="btn btn-Success text-dark mb-0">
                                             + Add
                                             User</button></a>
                                 </div>
@@ -57,7 +57,7 @@
                                                     <?= $user->email?>
                                                 </td>
                                                 <td>
-                                                    <a class="flex items-center text-theme-1 mr-3 btn"
+                                                    <a class="flex items-center text-theme-1 mr-3 btn text-info"
                                                         href="{{route('edit_user',['id' => $user->id])}}"> <img
                                                             src="{{asset('img/edit.svg')}}"> Edit </a>
 

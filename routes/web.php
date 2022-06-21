@@ -1,11 +1,14 @@
 <?php
 
+use App\Exports\BookingExport;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UploadController;
 use App\Models\User;
 use App\Models\Equipment;
 use App\Models\Clas;
+use App\Models\Licence;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +25,8 @@ Route::get('/', function () {
     $users =  User::all()->count();
     $categoury = Equipment::all()->count();
     $class = Clas::all()->count();
-    return view('admin.dashboard',compact('users','class','categoury'));
+    $lice = Licence::all()->count();
+    return view('admin.dashboard',compact('users','class','categoury','lice'));
 })->middleware(['auth']);
 
 
@@ -43,8 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::PUT('/licence_update' , [AdminController::class, 'licence_update'])->name('licence_update');
     Route::delete('/licence_delete' , [AdminController::class, 'licence_delete'])->name('licence_delete');
 
-
-
+    //============================video upload controller=======================================
     Route::post('/upload', [UploadController::class, 'store']);
     Route::get('/admin_logout', [AdminController::class, 'logout'])->name('admin_logout');
 
@@ -53,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/add_equipments', [AdminController::class, 'add_eqp_show'])->name('show_add_equipments');
     Route::post('/add_equipments', [AdminController::class, 'add_eqp'])->name('add_equipments');
     Route::get('/edit_equipment/{id}' , [AdminController::class, 'edit_equipment'])->name('edit_equipment');
+    Route::post('/edit_equipment/upload' ,[UploadController::class, 'store']);
     Route::post('/update_equipment/{id}' , [AdminController::class, 'update_equipment'])->name('update_equipment');
     Route::delete('/equipment_delete' , [AdminController::class, 'equipment_delete'])->name('equipment_delete');
 
@@ -61,19 +65,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/add_class', [AdminController::class, 'add_clas_show'])->name('show_add_class');
     Route::post('/add_class', [AdminController::class, 'add_clas'])->name('add_class');
     Route::get('/edit_class/{id}' , [AdminController::class, 'edit_class'])->name('edit_class');
+    Route::post('/edit_class/upload' ,[UploadController::class, 'store']);
     Route::post('/update_class/{id}' , [AdminController::class, 'update_class'])->name('update_class');
     Route::delete('/class_delete' , [AdminController::class, 'class_delete'])->name('class_delete');
 
      //=============================Ratings And Reviews Routes ========================================
      Route::get('/ratings', [AdminController::class, 'ratings'])->name('ratings');
-     Route::get('/reviews', [AdminController::class, 'reviews'])->name('reviews');
+     Route::delete('/ratings_delete' , [AdminController::class, 'ratings_delete'])->name('ratings_delete');
+     Route::get('/booking', [AdminController::class, 'booking'])->name('booking');
+     Route::get('booking_export',[AdminController::class, 'get_booking_data'])->name('get_booking_data');
+     Route::delete('/booking_delete' , [AdminController::class, 'booking_delete'])->name('booking_delete');
+;
 });
 
 Route::get('/dashboard', function () {
     $users =  User::all()->count();
     $categoury = Equipment::all()->count();
     $class = Clas::all()->count();
-    return view('admin.dashboard',compact('users','class','categoury'));
+    $lice = Licence::all()->count();
+    return view('admin.dashboard',compact('users','class','categoury','lice'));
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__ . '/auth.php';
