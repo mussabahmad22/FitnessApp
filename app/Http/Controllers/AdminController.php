@@ -237,14 +237,14 @@ class AdminController extends Controller
             'eqp_title' => 'required',
             'file_title' => 'required',
             'eqp_desc' => 'required',
-            'video_file' => 'required',
+            'video_path' => 'required',
         ]);
 
         $eqp = new Equipment();
         $eqp->eqp_name = $request->eqp_title;
         $eqp->eqp_img = "images/" . $image_name;
         $eqp->eqp_desc = $request->eqp_desc;
-        $eqp->eqp_video_path =  $request->video_path;
+        $eqp->eqp_video_path = "files"."/". $request->video_path;
         $eqp->save();
         return redirect(route('equipments'))->with('success', 'Equipment Added successfully');
     }
@@ -282,7 +282,7 @@ class AdminController extends Controller
         if ($request->video_path == null) {
             $video_path = $eqp->eqp_video_path;
         } else {
-            $video_path = $request->video_path;
+            $video_path ="files"."/". $request->video_path;
         }
 
         $eqp->eqp_name = $request->eqp_title;
@@ -342,7 +342,7 @@ class AdminController extends Controller
             'trainer_name' => 'required',
             'workout_level' => 'required',
             'file_title' => 'required',
-            'video_file' => 'required',
+            'video_path' => 'required',
         ]);
 
         $clas = new Clas();
@@ -351,7 +351,7 @@ class AdminController extends Controller
         $clas->workout_level = $request->workout_level;
         $clas->trainer_name = $request->trainer_name;
         $clas->clas_img = "images/" . $image_name;
-        $clas->clas_video_path = $request->video_path;
+        $clas->clas_video_path = "files"."/". $request->video_path;
         $clas->save();
 
         $eqps = $request->eqp_title_id;
@@ -420,7 +420,7 @@ class AdminController extends Controller
             $video_path = $class->clas_video_path;
         } else {
 
-            $video_path = $request->video_path;
+            $video_path ="files"."/". $request->video_path;
         }
 
         //$class->eqp_id = $request->eqp_title_id;

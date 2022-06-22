@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/licence_delete' , [AdminController::class, 'licence_delete'])->name('licence_delete');
 
     //============================video upload controller=======================================
-    Route::post('/upload', [UploadController::class, 'store']);
+    Route::post('/upload', [UploadController::class, 'store'])->name('chunk.store');
     Route::get('/admin_logout', [AdminController::class, 'logout'])->name('admin_logout');
 
     //========================Equipments Routes =========================================
