@@ -64,6 +64,21 @@
                                         @enderror
                                     </span>
                                 </div>
+                                <br>
+                                <div class="mb-3 {{isset($record->eqp_video_path)?'':'d-none'}}" id="videoid">
+                                    <div>
+                                        <video id="video_load" width="380" height="300" controls>
+                                            <source class="videosrc"
+                                                src="{{isset($record->eqp_video_path)?asset('public/storage/'.$record->eqp_video_path):''}}"
+                                                type="video/mp4">
+                                            <source class="videosrc"
+                                                src="{{isset($record->eqp_video_path)?asset('public/storage/'.$record->eqp_video_path):''}}"
+                                                type="video/ogg">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+
+                                </div>
                                 <input type="hidden" name="video_path" id="video_path">
                                 <button type="submit" id="btn" class="btn btn-dark "
                                     {{$variable_text}}>{{$text}}</button>
@@ -128,14 +143,14 @@
 
 <script src="{{ asset('/plupload/js/plupload.full.min.js') }}"></script>
 <script type="text/javascript">
-   $(document).ready(function () {
+    $(document).ready(function () {
         var path = "{{ asset('/plupload/js/') }}";
 
         var uploader = new plupload.Uploader({
             browse_button: 'pickfiles',
             container: document.getElementById('file-input'),
             url: '{{ route("chunk.store") }}',
-            chunk_size: '1000kb', // 1 MB
+            chunk_size: '10Mb', // 1 MB
             max_retries: 2,
             filters: {
                 max_file_size: '100000mb',
@@ -164,7 +179,7 @@
                     console.log('UploadProgress');
                     console.log(file);
                     document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
-                    document.querySelector(".progress").innerHTML = '<div class="progress-bar bg-info" style="width: ' + file.percent + '%; height: 15px;">' + file.percent + '%</div>';
+                    document.querySelector(".progress").innerHTML = '<div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: ' + file.percent + '%; height: 15px;">' + file.percent + '%</div>';
                 },
                 FileUploaded: function (up, file, result) {
 
@@ -174,6 +189,9 @@
                     responseResult = JSON.parse(result.response);
 
                     $('#video_path').val(responseResult.file);
+                    $('.videosrc').attr('src', 'https://wh717090.ispot.cc/fitness/public/storage/files/' + responseResult.file);
+                    $('#video_load')[0].load();
+                    $('#videoid').removeClass('d-none');
                     $('#btn').removeAttr('disabled');
 
 

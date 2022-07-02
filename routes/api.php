@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
+use App\Mail\FitnessMail;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Rating;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +39,20 @@ Route::post('/booking_details',  [ApiController::class, 'booking_details']);
 
 //============================Ratings Api=============================
 Route::post('/ratings',  [ApiController::class, 'ratings']);
+
+//======================== Send Email Route ===============================
+Route::get('send-mail', function () {
+
+    $ratings = Rating::join('clas','ratings.class_id', '=', 'clas.id')->join('users', 'ratings.user_id', '=', 'users.id')->select('users.name', 'clas.clas_name' ,'ratings.class_review','ratings.difficulty_rating','ratings.instructor_rating','ratings.id')->get();
+    
+   
+    $details = [
+        'title' => 'User Ratings By Fitness App',
+        'body' => 'This is for testing email using smtp'
+    ];
+   
+    Mail::to('mussabahmad1@gmail.com')->send(new \App\Mail\FitnessMail($details));
+
+    return view('admin.ratings', compact('ratings'));
+    dd("Email is Sent.");
+});

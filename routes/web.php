@@ -8,6 +8,10 @@ use App\Models\User;
 use App\Models\Equipment;
 use App\Models\Clas;
 use App\Models\Licence;
+use App\Mail\FitnessMail;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Rating;
+
 
 
 /*
@@ -77,7 +81,7 @@ Route::middleware('auth')->group(function () {
      Route::delete('/booking_delete' , [AdminController::class, 'booking_delete'])->name('booking_delete');
 ;
 });
-
+//==================================Dashboard Route ==========================================
 Route::get('/dashboard', function () {
     $users =  User::all()->count();
     $categoury = Equipment::all()->count();
@@ -85,5 +89,22 @@ Route::get('/dashboard', function () {
     $lice = Licence::all()->count();
     return view('admin.dashboard',compact('users','class','categoury','lice'));
 })->middleware(['auth'])->name('dashboard');
+
+//======================== Send Email Route ===============================
+// Route::get('send-mail', function () {
+
+//     $ratings = Rating::join('clas','ratings.class_id', '=', 'clas.id')->join('users', 'ratings.user_id', '=', 'users.id')->select('users.name', 'clas.clas_name' ,'ratings.class_review','ratings.difficulty_rating','ratings.instructor_rating','ratings.id')->get();
+    
+   
+//     $details = [
+//         'title' => 'User Ratings By Fitness App',
+//         'body' => 'This is for testing email using smtp'
+//     ];
+   
+//     Mail::to('mussabahmad1@gmail.com')->send(new \App\Mail\FitnessMail($details));
+
+//     return view('admin.ratings', compact('ratings'));
+//     dd("Email is Sent.");
+// });
 
 require __DIR__ . '/auth.php';
