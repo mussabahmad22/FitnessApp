@@ -16,6 +16,10 @@ use App\Mail\FitnessMail;
 use App\Mail\RatingsEmail;
 use App\Models\MultipleEmail;
 use Illuminate\Support\Facades\Mail;
+use App\Models\SplashVideo;
+use App\Models\QR;
+use App\Models\Category;
+
 
 
 class ApiController extends Controller
@@ -84,7 +88,27 @@ class ApiController extends Controller
     public function recomended_video(Request $request)
     {
 
-        $recomended_videos = Clas::Select('id', 'clas_name', 'clas_img', 'clas_video_path')->whereIn('id', (AddMultipleEqp::Select('class_id')->where('eqp_id', $request->eqp_id)))->get();
+        $recomended_videos = Clas::Select('id', 'clas_name', 'clas_img', 'video_thumb_img' , 'clas_qr_img', 'clas_video_path')->whereIn('id', (AddMultipleEqp::Select('class_id')->where('eqp_id', $request->eqp_id)))->get();
+
+        $class_ratings = [];
+
+        foreach ($recomended_videos as $que) {
+
+            $ratings = Rating::where('user_id', $request->user_id)->where('class_id', $que->id)->first();
+
+            if ($ratings) {
+
+                $que->class_review = $ratings->class_review;
+                $que->difficulty_rating = $ratings->difficulty_rating;
+                $que->instructor_rating = $ratings->instructor_rating;
+            } else {
+
+                $que->class_review = "";
+                $que->difficulty_rating = 0;
+                $que->instructor_rating = 0;
+            }
+            array_push($class_ratings, $que);
+        }
 
         if (count($recomended_videos) == 0) {
 
@@ -101,10 +125,31 @@ class ApiController extends Controller
     }
 
     //================================== Class Details Api =============================
-    public function class_details()
+    public function class_details(Request $request)
     {
 
         $class = Clas::all();
+
+        $class_ratings = [];
+
+        foreach ($class as $que) {
+
+            $ratings = Rating::where('user_id', $request->user_id)->where('class_id', $que->id)->first();
+
+            if ($ratings) {
+
+                $que->class_review = $ratings->class_review;
+                $que->difficulty_rating = $ratings->difficulty_rating;
+                $que->instructor_rating = $ratings->instructor_rating;
+            } else {
+
+                $que->class_review = "";
+                $que->difficulty_rating = 0;
+                $que->instructor_rating = 0;
+            }
+            array_push($class_ratings, $que);
+        }
+
 
         if (count($class) == 0) {
 
@@ -115,7 +160,7 @@ class ApiController extends Controller
 
             $res['status'] = true;
             $res['message'] = "Class List";
-            $res['data'] = $class;
+            $res['data'] = $class_ratings;
             return response()->json($res);
         }
     }
@@ -212,10 +257,19 @@ class ApiController extends Controller
             return response()->json($res);
         }
         $ratings = Rating::where('user_id', $request->user_id)->where('class_id', $request->class_id)->first();
+
         if ($ratings) {
 
-            $res['status'] = false;
-            $res['message'] = "You Already Rate This Class!!";
+            $rating = Rating::find($ratings->id);
+            $rating->user_id = $request->user_id;
+            $rating->class_id = $request->class_id;
+            $rating->class_review = $request->class_review;
+            $rating->difficulty_rating = $request->difficulty_rating;
+            $rating->instructor_rating = $request->instructor_rating;
+            $rating->save();
+            $res['status'] = true;
+            $res['message'] = "Your Rating Updated of This Class!!";
+            $res['data'] = $rating;
             return response()->json($res);
         }
 
@@ -261,6 +315,140 @@ class ApiController extends Controller
             $res['status'] = false;
             $res['message'] = "You Can't rate This Class!";
             return response()->json($res, 404);
+        }
+    }
+
+    public function splashvideo()
+    {
+
+        $video = SplashVideo::find(1);
+        if (is_null($video)) {
+
+            $res['status'] = false;
+            $res['message'] = "Record Not Found!";
+            return response()->json($res, 404);
+        } else {
+
+            $res['status'] = true;
+            $res['message'] = "Splash Screen List";
+            $res['data'] = $video;
+            return response()->json($res);
+        }
+    }
+
+    public function qr_image()
+    {
+
+        $qr = QR::find(1);
+
+        if (is_null($qr)) {
+
+            $res['status'] = false;
+            $res['message'] = "Qr Image Not Found!";
+            return response()->json($res, 404);
+        } else {
+
+            $res['status'] = true;
+            $res['message'] = "Qr Image";
+            $res['data'] = $qr;
+            return response()->json($res);
+        }
+    }
+
+    public function category()
+    {
+
+        $category = Category::all();
+
+        if (count($category) == 0) {
+
+            $res['status'] = false;
+            $res['message'] = "category Not Found!";
+            return response()->json($res, 404);
+        } else {
+
+            $res['status'] = true;
+            $res['message'] = "List";
+            $res['data'] = $category;
+            return response()->json($res);
+        }
+    }
+
+    public function category_classes(Request $request)
+    {
+        
+        if ($request->cat_id == 0) {
+            $class = Clas::all();
+
+            $class_ratings = [];
+
+            foreach ($class as $que) {
+
+                $ratings = Rating::where('user_id', $request->user_id)->where('class_id', $que->id)->first();
+
+                if ($ratings) {
+
+                    $que->class_review = $ratings->class_review;
+                    $que->difficulty_rating = $ratings->difficulty_rating;
+                    $que->instructor_rating = $ratings->instructor_rating;
+                } else {
+
+                    $que->class_review = "";
+                    $que->difficulty_rating = 0;
+                    $que->instructor_rating = 0;
+                }
+                array_push($class_ratings, $que);
+            }
+
+
+            if (count($class) == 0) {
+
+                $res['status'] = false;
+                $res['message'] = "Class Not Found!";
+                return response()->json($res, 404);
+            } else {
+
+                $res['status'] = true;
+                $res['message'] = "Class List";
+                $res['data'] = $class_ratings;
+                return response()->json($res);
+            }
+        }
+
+
+        $category = Clas::where('cat_id', $request->cat_id)->get();
+
+        $class_ratings = [];
+
+        foreach ($category as $que) {
+
+            $ratings = Rating::where('user_id', $request->user_id)->where('class_id', $que->id)->first();
+
+            if ($ratings) {
+
+                $que->class_review = $ratings->class_review;
+                $que->difficulty_rating = $ratings->difficulty_rating;
+                $que->instructor_rating = $ratings->instructor_rating;
+            } else {
+
+                $que->class_review = "";
+                $que->difficulty_rating = 0;
+                $que->instructor_rating = 0;
+            }
+            array_push($class_ratings, $que);
+        }
+
+        if (count($category) == 0) {
+
+            $res['status'] = false;
+            $res['message'] = "category Not Found!";
+            return response()->json($res, 404);
+        } else {
+
+            $res['status'] = true;
+            $res['message'] = "List";
+            $res['data'] = $class_ratings;
+            return response()->json($res);
         }
     }
 }

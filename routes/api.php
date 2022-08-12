@@ -40,6 +40,19 @@ Route::post('/booking_details',  [ApiController::class, 'booking_details']);
 //============================Ratings Api=============================
 Route::post('/ratings',  [ApiController::class, 'ratings']);
 
+//========================================= Splash Screen Api============================================
+Route::get('splash_screen', [ApiController::class,'splashvideo']);
+
+//============================QR scan Image Api=============================
+Route::get('/qr_image',  [ApiController::class, 'qr_image']);
+
+//============================Category Api==================================
+Route::get('/category',  [ApiController::class, 'category']);
+
+//============================classes Details by Category==================================
+Route::get('/category_classes',  [ApiController::class, 'category_classes']);
+
+
 //======================== Send Email Route ===============================
 Route::get('send-mail', function () {
 

@@ -79,6 +79,21 @@ Route::middleware('auth')->group(function () {
      Route::get('/booking', [AdminController::class, 'booking'])->name('booking');
      Route::get('booking_export',[AdminController::class, 'get_booking_data'])->name('get_booking_data');
      Route::delete('/booking_delete' , [AdminController::class, 'booking_delete'])->name('booking_delete');
+
+     //========================================= Splash Screen ============================================
+     Route::get('splash_screen', [AdminController::class,'splashvideo'])->name('splash_screen');
+     Route::post('splash_screen', [AdminController::class,'splashvideoadd'])->name('splash_screen_video');
+
+      //========================================= QR Scan  ============================================
+      Route::get('QR_show', [AdminController::class,'QR_show'])->name('QR_show');
+      Route::post('QR', [AdminController::class,'QR'])->name('QR');
+
+      //============================Class category========================================
+      Route::get('category', [AdminController::class,'category'])->name('category');
+      Route::post('add_category', [AdminController::class,'add_category'])->name('add_category');
+      Route::get('edit_category/{id}' , [AdminController::class, 'edit_category'])->name('edit_category');
+      Route::PUT('category_update' , [AdminController::class, 'category_update'])->name('category_update');
+      Route::delete('/category_delete' , [AdminController::class, 'category_delete'])->name('category_delete');
 ;
 });
 //==================================Dashboard Route ==========================================
@@ -90,21 +105,5 @@ Route::get('/dashboard', function () {
     return view('admin.dashboard',compact('users','class','categoury','lice'));
 })->middleware(['auth'])->name('dashboard');
 
-//======================== Send Email Route ===============================
-// Route::get('send-mail', function () {
-
-//     $ratings = Rating::join('clas','ratings.class_id', '=', 'clas.id')->join('users', 'ratings.user_id', '=', 'users.id')->select('users.name', 'clas.clas_name' ,'ratings.class_review','ratings.difficulty_rating','ratings.instructor_rating','ratings.id')->get();
-    
-   
-//     $details = [
-//         'title' => 'User Ratings By Fitness App',
-//         'body' => 'This is for testing email using smtp'
-//     ];
-   
-//     Mail::to('mussabahmad1@gmail.com')->send(new \App\Mail\FitnessMail($details));
-
-//     return view('admin.ratings', compact('ratings'));
-//     dd("Email is Sent.");
-// });
 
 require __DIR__ . '/auth.php';

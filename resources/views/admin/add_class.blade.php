@@ -28,6 +28,16 @@
                                         @enderror
                                     </span>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label ">Class Description*</label>
+                                    <textarea type="text" class="form-control input-lg " name="desc" id="desc"
+                                    >{{ isset($record->desc)?$record->desc:'' }}</textarea>
+                                    <span class="text-danger">
+                                        @error('desc')
+                                        {{ 'Class Description is required' }}
+                                        @enderror
+                                    </span>
+                                </div>
 
                                 <div class="mb-3">
                                     <label class="form-label ">Title Image :</label><br>
@@ -36,6 +46,44 @@
                                     <span class="text-danger">
                                         @error('file_title')
                                         {{ 'Class Image is required' }}
+                                        @enderror
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label ">Video Thumb Image :</label><br>
+                                    <input class="form-control" type="file" name="video_thumb_img" accept="image/*"
+                                        value="#">
+                                    <span class="text-danger">
+                                        @error('video_thumb_img')
+                                        {{ 'Video Thumb Image is required' }}
+                                        @enderror
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label ">QR Image :</label><br>
+                                    <input class="form-control" type="file" name="qr_img" accept="image/*"
+                                        value="#">
+                                    <span class="text-danger">
+                                        @error('qr_img')
+                                        {{ 'QR Image is required' }}
+                                        @enderror
+                                    </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label ">Choose Category* </label>
+                                    <select name="cat_id" class="form-control " id=""
+                                        class="category"  aria-label
+                                        value="">
+                                        <option disabled selected>Select Category</option>
+                                        @foreach($categories as $cat)
+
+                                        <option value="{{ $cat->id }}"  <?php if(isset($record->cat_id)){ echo 'selected'; }  ?> >{{ $cat->category_title}}</option>
+
+                                        @endforeach
+                                    </select>
+                                    <span class="text-danger">
+                                        @error('eqp_title_id')
+                                        {{ 'Choose Equipment Category' }}
                                         @enderror
                                     </span>
                                 </div>
@@ -61,6 +109,7 @@
                                         @enderror
                                     </span>
                                 </div>
+                                
                                 <div class="mb-3">
                                     <label class="form-label ">Choose Equipment </label>
                                     <select name="eqp_title_id[]" class="form-control selectpicker" id="eqp_title_id"
@@ -81,7 +130,7 @@
                                         @enderror
                                     </span>
                                 </div>
-                                <br>
+                          
                                 <div class="mb-3">
                                     <label class="form-label">Upload Video*</label>
                                     <div class="form-group" id="file-input">

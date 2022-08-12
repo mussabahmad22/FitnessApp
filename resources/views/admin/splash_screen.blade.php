@@ -3,55 +3,20 @@
 @section('main-container')
 
 <div class="content-wrapper">
-    <section class="content">
+    <div class="content-header">
         <div class="container-fluid py-4">
             <div class="row">
                 <div class="col-12">
                     <div class="card mb-4">
-                        <div class="card-header font-weight-bold">
-                            <h6>{{$title}}</h6>
+                        <div class="card-header pb-0">
+                            <h5> Update Splash Screen Video & App Logo</h5>
                         </div>
                         <div class="card-body">
-                            <form type="submit" action="{{$url}}" method="POST" enctype="multipart/form-data">
+                            <form type="submit" action="{{route('splash_screen')}}" method="POST"
+                                enctype="multipart/form-data">
                                 @csrf
-
                                 <div class="mb-3">
-                                    <label class="form-label">Equipment
-                                        Title*</label>
-                                    <input type="text" class="form-control" name="eqp_title" id="eqp_title"
-                                        value="{{ isset($record->eqp_name)?$record->eqp_name:'' }}">
-                                    <span class="text-danger">
-                                        @error('eqp_title')
-                                        {{ 'Equipment Title is required' }}
-                                        @enderror
-                                    </span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label ">Title Image
-                                        :</label><br>
-                                    <input class="form-control" type="file" name="file_title" accept="image/*"
-                                        value="#">
-                                    <span class="text-danger">
-                                        @error('file_title')
-                                        {{ 'Equipment Image is required' }}
-                                        @enderror
-                                    </span>
-                                </div>
-                                <br> <br>
-                                <div class="form-group">
-                                    <label><strong>Equipments Description*</strong></label>
-                                    <textarea class="form-control"
-                                        name="eqp_desc">{{ isset($record->eqp_desc)?$record->eqp_desc:'' }}</textarea>
-                                    <span class="text-danger">
-                                        @error('eqp_desc')
-                                        {{ 'Equipment Description is required' }}
-                                        @enderror
-                                    </span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Upload Video*</label>
+                                    <label class="form-label">Upload Video</label>
                                     <div class="form-group" id="file-input">
                                         <input class="form-control" type="file" name="video_file" id="pickfiles">
                                         <div id="filelist"></div>
@@ -60,86 +25,58 @@
                                     <div class="progress"></div>
                                     <span class="text-danger">
                                         @error('video_file')
-                                        {{$message}}
+                                        {{ 'Upload Video' }}
                                         @enderror
                                     </span>
                                 </div>
-                                <br>
-                                <div class="mb-3 {{isset($record->eqp_video_path)?'':'d-none'}}" id="videoid">
+                                <div class="mb-3 {{isset($video->splash_video_path)?'':'d-none'}}" id="videoid">
                                     <div>
                                         <video id="video_load" width="380" height="300" controls>
                                             <source class="videosrc"
-                                                src="{{isset($record->eqp_video_path)?asset('public/storage/'.$record->eqp_video_path):''}}"
+                                                src="{{isset($video->splash_video_path)?asset('public/storage/'.$video->splash_video_path):''}}"
                                                 type="video/mp4">
                                             <source class="videosrc"
-                                                src="{{isset($record->eqp_video_path)?asset('public/storage/'.$record->eqp_video_path):''}}"
+                                                src="{{isset($video->splash_video_path)?asset('public/storage/'.$video->splash_video_path):''}}"
                                                 type="video/ogg">
                                             Your browser does not support the video tag.
                                         </video>
                                     </div>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label ">App Logo</label><br>
+                                    <input class="form-control" type="file" name="file_title" accept="image/*"
+                                        value="#">
+                                    <span class="text-danger">
+                                        @error('file_title')
+                                        {{ 'App Logo is required' }}
+                                        @enderror
+                                    </span>
+                                </div>
+                                <div class="mb-3 {{isset($video->logo)?'':'d-none'}}" >
+                                    <img src="{{asset('public/storage/'. $video->logo)}}" width="100"
+                                                height="100">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label ">App Logo Text</label>
+                                    <input type="text" class="form-control" name="logo_text" value="{{ isset($video->logo_text)?$video->logo_text:'' }}">
+                                    <span class="text-danger">
+                                        @error('logo_text')
+                                        {{ 'Workout Level is required' }}
+                                        @enderror
+                                    </span>
+                                </div>
                                 <input type="hidden" name="video_path" id="video_path">
-                                <button type="submit" id="btn" class="btn btn-dark "
-                                    {{$variable_text}}>{{$text}}</button>
+                                <button type="submit" id="btn" class="btn btn-dark">Update</button>
                             </form>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </div>
-
-<!-- <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
-<script src="https://unpkg.com/filepond/dist/filepond.js"></script> -->
-
-<!-- <script>
-    // Register the plugin
-    FilePond.registerPlugin(FilePondPluginFileValidateType);
-    FilePond.registerPlugin(FilePondPluginFileValidateSize);
-
-    // ... FilePond initialisation code here
-</script>
-<script>
-    const inputElement = document.querySelector('input[id="file"]');
-    const pond = FilePond.create(inputElement, {
-        acceptedFileTypes: ['video/*'],
-        fileValidateTypeDetectType: (source, type) =>
-            new Promise((resolve, reject) => {
-                // Do custom type detection here and return with promise
-
-                resolve(type);
-            }),
-    });
-
-    FilePond.setOptions({
-        server: {
-            url: '/upload',
-            type: "POST",
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                chunkUploads: true,
-                chunkForce: true,
-                timeout: 7000,
-                allowFileSizeValidation: true,
-                maxTotalFileSize: 10000,
-              
-            },
-            process: {
-                onload: (res) => {
-                    $('#video_path').val(res);
-                    $('#btn').removeAttr('disabled');
-                }
-                
-            }
-
-
-        }
-    });
-    
-
-</script> -->
-
 <script src="{{ asset('/plupload/js/plupload.full.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -149,7 +86,7 @@
             browse_button: 'pickfiles',
             container: document.getElementById('file-input'),
             url: '{{ route("chunk.store") }}',
-            chunk_size: '10Mb', // 1 MB
+            chunk_size: '2Mb', // 1 MB
             max_retries: 2,
             filters: {
                 max_file_size: '100000mb',
@@ -191,7 +128,7 @@
                     $('.videosrc').attr('src', 'https://wh717090.ispot.cc/fitness/public/storage/files/' + responseResult.file);
                     $('#video_load')[0].load();
                     $('#videoid').removeClass('d-none');
-                    $('#btn').removeAttr('disabled');
+
 
 
                     if (responseResult.ok == 0) {
@@ -218,9 +155,11 @@
         uploader.init();
     });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"
+    integrity="sha512-FHZVRMUW9FsXobt+ONiix6Z0tIkxvQfxtCSirkKc5Sb4TKHmqq1dZa8DphF0XqKb3ldLu/wgMa8mT6uXiLlRlw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js"></script>
-
 
 @endsection

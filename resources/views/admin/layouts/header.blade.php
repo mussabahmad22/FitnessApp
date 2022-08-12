@@ -88,6 +88,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ (\Request::route()->getName() == 'category') ? 'active' : '' }}" href="{{route('category')}}">
+                        <div
+                            class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="ni fa fa-bars text-dark text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Class Categories</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ (\Request::route()->getName() == 'classes') ? 'active' : '' }}" href="{{route('classes')}}">
                         <div
                             class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -102,7 +111,7 @@
                             class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni fas fa-chart-pie text-success text-sm opacity-10"></i>
                         </div>
-                        <span class="nav-link-text ms-1">Equipments</span>
+                        <span class="nav-link-text ms-1">Equipment</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -120,7 +129,7 @@
                             class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="ni ni-key-25 text-danger text-sm opacity-10"></i>
                         </div>
-                        <span class="nav-link-text ms-1">Licence</span>
+                        <span class="nav-link-text ms-1">License</span>
                     </a>
                 </li>
                 <!-- <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Users Information</h6> -->
@@ -140,6 +149,24 @@
                             <i class="ni ni-chat-round text-info text-sm opacity-10"></i>
                         </div>
                         <span class="nav-link-text ms-1">Booking</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ (\Request::route()->getName() == 'splash_screen') ? 'active' : '' }} " href="{{route('splash_screen')}}">
+                        <div
+                            class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="ni ni-spaceship text-danger text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Splash Screen</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ (\Request::route()->getName() == 'QR_show') ? 'active' : '' }} " href="{{route('QR_show')}}">
+                        <div
+                            class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="ni ni-lock-circle-open text-warning text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">QR Code</span>
                     </a>
                 </li>
             </ul>
