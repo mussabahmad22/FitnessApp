@@ -37,7 +37,7 @@ class AdminController extends Controller
     {
         $users =  User::where('role', 'user')->get();
         return view('admin.index', compact('users'));
-    } 
+    }
 
     public function show_user_form()
     {
@@ -333,7 +333,7 @@ class AdminController extends Controller
 
     public function add_clas(Request $request)
     {
-        
+
         if ($request->file('qr_img') == null) {
             $image_qr = "";
         } else {
@@ -368,7 +368,7 @@ class AdminController extends Controller
             'qr_img' => 'required',
             'video_path' => 'required',
         ]);
-        
+
         $clas = new Clas();
         //$clas->eqp_id = $request->eqp_title_id;
         $clas->cat_id = $request->cat_id;
@@ -377,7 +377,7 @@ class AdminController extends Controller
         $clas->workout_level = $request->workout_level;
         $clas->trainer_name = $request->trainer_name;
         $clas->clas_img = "images/" . $image_name;
-        $clas->video_thumb_img= "images/" . $image_thumb;
+        $clas->video_thumb_img = "images/" . $image_thumb;
         $clas->clas_qr_img = "images/" . $image_qr;
         $clas->clas_video_path = "files" . "/" . $request->video_path;
         $clas->save();
@@ -448,7 +448,6 @@ class AdminController extends Controller
         if ($request->file('video_thumb_img') == null) {
 
             $image_thumb = $class->video_thumb_img;
-
         } else {
             $path_title = $request->file('video_thumb_img')->store('public/images');
 
@@ -458,7 +457,6 @@ class AdminController extends Controller
         if ($request->file('qr_img') == null) {
 
             $image_qr = $class->clas_qr_img;
-
         } else {
 
             $path_title = $request->file('qr_img')->store('public/images');
@@ -469,7 +467,6 @@ class AdminController extends Controller
         if ($request->video_path == null) {
 
             $video_path = $class->clas_video_path;
-
         } else {
 
             $video_path = "files" . "/" . $request->video_path;
@@ -574,7 +571,7 @@ class AdminController extends Controller
 
         $video = SplashVideo::findOrFail(1);
 
-        return view('admin.splash_screen', compact('query','video'));
+        return view('admin.splash_screen', compact('query', 'video'));
     }
 
     public function splashvideoadd(Request $request)
@@ -662,7 +659,7 @@ class AdminController extends Controller
         }
 
         $request->validate([
-        
+
             'cat_title' => 'required',
             'file_title' => 'required',
 
@@ -687,7 +684,7 @@ class AdminController extends Controller
 
     public function category_update(Request $request)
     {
-    
+
         $request->validate([
             'cat_title' => 'required',
         ]);
@@ -699,9 +696,8 @@ class AdminController extends Controller
         if ($request->file('file_title') == null) {
 
             $image_name = $cat->icon_img;
-
         } else {
-            
+
             $path_title = $request->file('file_title')->store('public/images');
 
             $image_name = "images/" . basename($path_title);
@@ -716,13 +712,19 @@ class AdminController extends Controller
     public function category_delete(Request $request)
     {
         $query_id = $request->delete_category_id;
+
+        $class = Clas::where('cat_id', $query_id)->first();
+        if ($class) {
+            $mtlp_eqp = AddMultipleEqp::where('class_id', $class->id);
+            if($mtlp_eqp):
+            $mtlp_eqp->delete();
+            endif;
+            $class->delete();
+        }
+            $cat = Category::findOrFail($query_id);
+            $cat->delete();
+            return redirect()->back()->with('error', 'Category Deleted successfully');
         
-        $class = Clas::where('cat_id', $query_id )->first();
-        $mtlp_eqp = AddMultipleEqp::where('class_id', $class->id);
-        $mtlp_eqp->delete();
-        $class->delete();
-        $cat = Category::findOrFail($query_id);
-        $cat->delete();
-        return redirect()->back()->with('error', 'Category Deleted successfully');
+        
     }
 }
